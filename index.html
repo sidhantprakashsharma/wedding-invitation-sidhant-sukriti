@@ -8,15 +8,15 @@
   <!-- WhatsApp / Open Graph Meta Tags -->
   <meta property="og:title" content="शुभ विवाह - सिद्धान्त एवं सुकृति" />
   <meta property="og:description" content="आपके स्नेह और आशीर्वाद की अभिलाषा के साथ आपका सादर आमंत्रण है। दिनांक: 02 एवं 03 दिसंबर, 2026" />
-  <meta property="og:image" content="https://yourdomain.com/preview-thumbnail.jpg" />
-  <meta property="og:url" content="https://yourdomain.com/index.html" />
+  <meta property="og:image" content="https://sidhantprakashsharma.github.io/wedding-invitation-sidhant-sukriti/card_background.jpg" />
+  <meta property="og:url" content="https://sidhantprakashsharma.github.io/wedding-invitation-sidhant-sukriti/" />
   <meta property="og:type" content="website" />
 
   <!-- Twitter Card Preview Tags -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="शुभ विवाह - सिद्धान्त एवं सुकृति" />
   <meta name="twitter:description" content="आपके स्नेह और आशीर्वाद की अभिलाषा के साथ आपका सादर आमंत्रण है। दिनांक: 02 एवं 03 दिसंबर, 2026" />
-  <meta name="twitter:image" content="https://yourdomain.com/preview-thumbnail.jpg" />
+  <meta name="twitter:image" content="https://sidhantprakashsharma.github.io/wedding-invitation-sidhant-sukriti/card_background.jpg" />
 
   <!-- Google Fonts for Regal Devanagari Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -577,10 +577,8 @@
     /* Phone Handler with Clipboard Fallback */
     function handlePhoneClick(e, phoneNum) {
       e.preventDefault();
-      // Try opening native phone dialer first
       window.location.href = 'tel:' + phoneNum;
 
-      // Copy to clipboard as fallback for non-dialer environments
       if (navigator.clipboard) {
         navigator.clipboard.writeText(phoneNum).then(() => {
           showToast('नंबर कॉपी हो गया: ' + phoneNum);
@@ -698,7 +696,7 @@
         this.x = Math.random() * width;
         this.y = initial ? Math.random() * height : -20;
         this.size = Math.random() * 6 + 4;
-        this.speedY = Math.random() * 0.4 + 0.2; // Slowed down speed
+        this.speedY = Math.random() * 0.4 + 0.2;
         this.speedX = Math.random() * 0.3 - 0.15;
         this.rotation = Math.random() * Math.PI * 2;
         this.rotSpeed = Math.random() * 0.01 - 0.005;
