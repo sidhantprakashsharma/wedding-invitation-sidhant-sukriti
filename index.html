@@ -56,6 +56,129 @@
       z-index: 10;
     }
 
+    /* Minimalist Portrait Front Cover Gate */
+    #welcome-gate {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: #f7f3ed linear-gradient(135deg, #f7f3ed 0%, #ece4d8 50%, #dfd5c4 100%);
+      z-index: 9999999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #welcome-gate.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-card {
+      position: relative;
+      width: calc(100vw - 32px);
+      max-width: 380px;
+      aspect-ratio: 9 / 16;
+      background: #0f3838 linear-gradient(135deg, #0f3838 0%, #174d4d 100%);
+      border: 1.5px solid #c5a059;
+      border-radius: 8px;
+      box-shadow: 0 16px 40px rgba(15, 56, 56, 0.3), 0 4px 12px rgba(0,0,0,0.15);
+      padding: 18% 12%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    /* Subtle inner border frame */
+    .gate-card::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px dotted rgba(197, 160, 89, 0.4);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .gate-top-heading {
+      font-family: 'Rozha One', serif;
+      color: #f4d06f;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    .gate-names-wrapper {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gate-names {
+      font-family: 'Rozha One', serif;
+      color: #ffffff;
+      font-size: 1.8rem;
+      line-height: 1.15;
+    }
+
+    .gate-connector {
+      font-family: 'Noto Serif Devanagari', serif;
+      color: #c5a059;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .gate-date-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gate-ornament {
+      color: #c5a059;
+      font-size: 0.65rem;
+    }
+
+    .gate-date {
+      font-family: 'Noto Serif Devanagari', serif;
+      color: #f4d06f;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .open-btn {
+      width: 100%;
+      padding: 11px 20px;
+      background: linear-gradient(135deg, #f4d06f 0%, #c5a059 100%);
+      color: #0f3838;
+      font-family: 'Rozha One', serif;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, filter 0.2s ease;
+      white-space: nowrap;
+      margin-top: 10px;
+    }
+
+    .open-btn:active {
+      transform: scale(0.96);
+      filter: brightness(0.95);
+    }
+
     /* Video Intro Overlay */
     #intro-overlay {
       position: fixed;
@@ -67,7 +190,7 @@
       height: 100%;
       background-color: #000000;
       z-index: 99999;
-      display: flex;
+      display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -437,8 +560,28 @@
   <!-- Toast Notification -->
   <div id="toast">नंबर कॉपी हो गया!</div>
 
-  <!-- Background Music Track with cache-buster query string -->
+  <!-- Background Music Track with cache-buster -->
   <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto"></audio>
+
+  <!-- Minimalist Portrait Front Cover Gate -->
+  <div id="welcome-gate">
+    <div class="gate-card">
+      <div class="gate-top-heading">शुभ विवाह</div>
+      
+      <div class="gate-names-wrapper">
+        <div class="gate-names">सिद्धान्त</div>
+        <div class="gate-connector">संग</div>
+        <div class="gate-names">सुकृति</div>
+      </div>
+
+      <div class="gate-date-section">
+        <div class="gate-ornament">❖ ❖ ❖</div>
+        <div class="gate-date">02 एवं 03 दिसंबर, 2026</div>
+      </div>
+
+      <button class="open-btn" onclick="openInvitation()">॥ निमंत्रण खोलें ॥</button>
+    </div>
+  </div>
 
   <!-- Video Intro Overlay -->
   <div id="intro-overlay">
@@ -571,26 +714,56 @@
   </div>
 
   <script>
-    /* Background Audio Controls */
+    /* Background Audio & Welcome Gate Trigger */
     const bgAudio = document.getElementById('bg-audio');
+    const welcomeGate = document.getElementById('welcome-gate');
+    const introOverlay = document.getElementById('intro-overlay');
+    const introVideo = document.getElementById('intro-video');
 
     if (bgAudio) {
       bgAudio.currentTime = 0; // Force start from beginning
-      bgAudio.play().catch(error => {
-        console.log("Audio waiting for first user touch:", error);
-      });
     }
 
-    // Unlocks audio playback on first interaction anywhere on screen
-    function unlockAudio() {
-      if (bgAudio && bgAudio.paused) {
+    function openInvitation() {
+      // 1. Play background music immediately with user interaction touch
+      if (bgAudio) {
         bgAudio.currentTime = 0;
+        bgAudio.play().catch(err => console.log("Audio play error:", err));
+      }
+
+      // 2. Hide Welcome Gate
+      if (welcomeGate) {
+        welcomeGate.classList.add('fade-out');
+        setTimeout(() => {
+          welcomeGate.style.display = 'none';
+        }, 800);
+      }
+
+      // 3. Show and play Intro Video
+      if (introOverlay) {
+        introOverlay.style.display = 'flex';
+        if (introVideo) {
+          introVideo.play().catch(() => {});
+        }
+      }
+    }
+
+    function dismissIntro() {
+      if (introOverlay) {
+        introOverlay.classList.add('fade-out');
+        setTimeout(() => {
+          introOverlay.style.display = 'none';
+        }, 800);
+      }
+      if (bgAudio && bgAudio.paused) {
         bgAudio.play().catch(() => {});
       }
     }
 
-    document.body.addEventListener('click', unlockAudio, { once: true });
-    document.body.addEventListener('touchstart', unlockAudio, { once: true });
+    if (introVideo) {
+      introVideo.addEventListener('ended', dismissIntro);
+      introVideo.addEventListener('error', dismissIntro);
+    }
 
     // Tab Switch Pause/Resume Handler
     document.addEventListener('visibilitychange', () => {
@@ -598,7 +771,9 @@
       if (document.hidden) {
         bgAudio.pause();
       } else {
-        bgAudio.play().catch(() => {});
+        if (welcomeGate && welcomeGate.style.display === 'none') {
+          bgAudio.play().catch(() => {});
+        }
       }
     });
 
@@ -622,25 +797,6 @@
       setTimeout(() => {
         toast.classList.remove('show');
       }, 2500);
-    }
-
-    /* Intro Overlay Management */
-    const introOverlay = document.getElementById('intro-overlay');
-    const introVideo = document.getElementById('intro-video');
-
-    function dismissIntro() {
-      if (introOverlay) {
-        introOverlay.classList.add('fade-out');
-        setTimeout(() => {
-          introOverlay.style.display = 'none';
-        }, 800);
-      }
-      unlockAudio();
-    }
-
-    if (introVideo) {
-      introVideo.addEventListener('ended', dismissIntro);
-      introVideo.addEventListener('error', dismissIntro);
     }
 
     /* Scroll Itinerary Accordion Handler */
@@ -727,6 +883,7 @@
         this.size = Math.random() * 6 + 4;
         this.speedY = Math.random() * 0.4 + 0.2;
         this.speedX = Math.random() * 0.3 - 0.15;
+        this.type = Math.floor(Math.random() * 3);
         this.rotation = Math.random() * Math.PI * 2;
         this.rotSpeed = Math.random() * 0.01 - 0.005;
         this.oscillation = Math.random() * 0.03;
