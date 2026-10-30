@@ -442,9 +442,13 @@
   <!-- Toast Notification -->
   <div id="toast">नंबर कॉपी हो गया!</div>
 
+  <!-- Background Music Track with cache-buster query string -->
+  <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto"></audio>
+
   <!-- Video Intro Overlay -->
   <div id="intro-overlay">
     <div class="video-container">
+      <!-- Muted existing video -->
       <video id="intro-video" autoplay muted playsinline preload="auto">
         <source src="wedding_intro.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -574,6 +578,36 @@
   </div>
 
   <script>
+    /* Background Audio Controls & Browser Autoplay Policies Handling */
+    const bgAudio = document.getElementById('bg-audio');
+
+    // Reset audio state to start cleanly from 0 on fresh loads / hard reloads
+    if (bgAudio) {
+      bgAudio.currentTime = 0;
+    }
+
+    function startBackgroundAudio() {
+      if (bgAudio) {
+        bgAudio.currentTime = 0; // Force play from start
+        bgAudio.play().catch(error => {
+          console.log("Autoplay blocked by browser policy, will resume on interaction:", error);
+        });
+      }
+    }
+
+    // Tab Switch Pause/Resume Handler
+    document.addEventListener('visibilitychange', () => {
+      if (!bgAudio) return;
+      if (document.hidden) {
+        bgAudio.pause();
+      } else {
+        // Only resume if the intro overlay is gone or user has started viewing the invite
+        if (introOverlay && introOverlay.style.display === 'none') {
+          bgAudio.play().catch(() => {});
+        }
+      }
+    });
+
     /* Phone Handler with Clipboard Fallback */
     function handlePhoneClick(e, phoneNum) {
       e.preventDefault();
@@ -607,12 +641,24 @@
           introOverlay.style.display = 'none';
         }, 800);
       }
+      startBackgroundAudio();
     }
 
     if (introVideo) {
+      // Try to play audio alongside the video on load
+      introVideo.addEventListener('loadedmetadata', () => {
+        startBackgroundAudio();
+      });
       introVideo.addEventListener('ended', dismissIntro);
       introVideo.addEventListener('error', dismissIntro);
     }
+
+    // Fallback user interaction listener in case browser blocks programmatic audio autoplay before tap
+    document.body.addEventListener('click', function initAudioOnClick() {
+      if (bgAudio && bgAudio.paused && introOverlay && introOverlay.style.display !== 'none') {
+        startBackgroundAudio();
+      }
+    }, { once: true });
 
     /* Scroll Itinerary Accordion Handler */
     function updateScrollItinerary() {
