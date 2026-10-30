@@ -56,7 +56,7 @@
       z-index: 10;
     }
 
-    /* Formal Front Cover Gate (Hindi-Only) */
+    /* Formal Front Cover Gate (Hindi-Only with Extended Ornamental Frame & Falling Petals) */
     #welcome-gate {
       position: fixed;
       top: 0;
@@ -71,8 +71,9 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 20px;
       transition: opacity 0.8s ease, visibility 0.8s ease;
+      overflow-y: auto;
     }
 
     #welcome-gate.fade-out {
@@ -88,31 +89,43 @@
       align-items: center;
       text-align: center;
       width: 100%;
-      max-width: 360px;
-      padding: 40px 24px;
-      background: rgba(15, 56, 56, 0.4);
-      border: 1.5px solid rgba(197, 160, 89, 0.4);
+      max-width: 380px;
+      padding: 44px 24px;
+      background: rgba(15, 56, 56, 0.45);
+      border: 1.5px solid rgba(197, 160, 89, 0.5);
       border-radius: 12px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(197, 160, 89, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 35px rgba(197, 160, 89, 0.1);
+      margin: auto;
     }
 
+    /* Elegant Ornamental Corners */
     .cover-content::before, .cover-content::after {
       content: '❖';
       position: absolute;
       color: #c5a059;
-      font-size: 0.85rem;
-      opacity: 0.8;
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
     .cover-content::before { top: 12px; left: 14px; }
     .cover-content::after { top: 12px; right: 14px; }
 
+    .cover-bottom-corners::before, .cover-bottom-corners::after {
+      content: '❖';
+      position: absolute;
+      color: #c5a059;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .cover-bottom-corners::before { bottom: 12px; left: 14px; }
+    .cover-bottom-corners::after { bottom: 12px; right: 14px; }
+
     .cover-top-sub {
       font-family: 'Rozha One', serif;
       color: #f4d06f;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       letter-spacing: 2px;
       white-space: nowrap;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
@@ -120,7 +133,7 @@
       color: #c5a059;
       font-size: 0.75rem;
       letter-spacing: 3px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .cover-names-group {
@@ -128,13 +141,13 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      margin: 8px 0 16px 0;
+      margin: 6px 0 14px 0;
     }
 
     .cover-name-primary {
       font-family: 'Rozha One', serif;
       color: #ffffff;
-      font-size: 2.3rem;
+      font-size: 2.4rem;
       line-height: 1.15;
       text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
@@ -152,13 +165,45 @@
       color: #d6ccbe;
       font-size: 0.82rem;
       letter-spacing: 0.5px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       font-style: italic;
+    }
+
+    /* Additional Front Page Design Elements to Fill Empty Space Gracefully */
+    .cover-ornament-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin: 10px 0 16px 0;
+    }
+
+    .cover-ornament-box::before,
+    .cover-ornament-box::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c5a059, transparent);
+    }
+
+    .cover-ornament-box span {
+      color: #c5a059;
+      font-size: 0.7rem;
+    }
+
+    .cover-date-badge {
+      font-family: 'Noto Serif Devanagari', serif;
+      color: #f4d06f;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
     }
 
     .cover-btn {
       width: 100%;
-      max-width: 260px;
+      max-width: 270px;
       padding: 13px 20px;
       background: linear-gradient(135deg, #f4d06f 0%, #c5a059 100%);
       color: #0f3838;
@@ -554,7 +599,7 @@
 </head>
 <body>
 
-  <!-- Petal Canvas Overlay -->
+  <!-- Petal Canvas Overlay (Active on Front Page and Throughout) -->
   <canvas id="petal-canvas"></canvas>
 
   <!-- Toast Notification -->
@@ -563,9 +608,9 @@
   <!-- Background Music Track with cache-buster -->
   <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto"></audio>
 
-  <!-- Formal Hindi-Only Front Cover Gate with Flying Petals -->
+  <!-- Formal Hindi-Only Front Cover Gate with Falling Petals and Enhanced Design Elements -->
   <div id="welcome-gate">
-    <div class="cover-content">
+    <div class="cover-content cover-bottom-corners">
       <div class="cover-top-sub">शुभ विवाह</div>
       <div class="cover-divider">❖ ❖ ❖</div>
       
@@ -575,9 +620,13 @@
         <div class="cover-name-primary">सुकृति</div>
       </div>
 
+      <div class="cover-ornament-box"><span>❖</span></div>
+
       <div class="cover-subtitle">हमारे इस मांगलिक अवसर पर आपका स्वागत है</div>
 
-      <button class="cover-btn" onclick="openInvitation()">॥ निमंत्रण पत्र देखें 🎵 ॥</button>
+      <div class="cover-date-badge">दिनांक: 02 एवं 03 दिसंबर, 2026</div>
+
+      <button class="cover-btn" onclick="openInvitation()">॥ निमंत्रण पत्र देखें ॥</button>
     </div>
   </div>
 
