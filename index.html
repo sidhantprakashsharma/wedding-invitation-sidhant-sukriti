@@ -56,6 +56,98 @@
       z-index: 10;
     }
 
+    /* Welcome / Open Gate Overlay */
+    #welcome-gate {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f3838 linear-gradient(135deg, #0f3838 0%, #174d4d 100%);
+      z-index: 9999999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #welcome-gate.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-content {
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      border: 1.5px solid #c5a059;
+      padding: 36px 24px;
+      border-radius: 12px;
+      background: rgba(15, 56, 56, 0.85);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .gate-top-heading {
+      font-family: 'Rozha One', serif;
+      color: #f4d06f;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .gate-title {
+      font-family: 'Yatra One', cursive;
+      color: #ffffff;
+      font-size: 1.4rem;
+    }
+
+    .gate-names {
+      font-family: 'Rozha One', serif;
+      color: #f4d06f;
+      font-size: 1.6rem;
+      line-height: 1.2;
+    }
+
+    .gate-connector {
+      font-family: 'Noto Serif Devanagari', serif;
+      color: #ffffff;
+      font-size: 0.85rem;
+    }
+
+    .gate-date {
+      font-family: 'Noto Serif Devanagari', serif;
+      color: #e5a93b;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .open-btn {
+      margin-top: 10px;
+      padding: 13px 32px;
+      background: linear-gradient(135deg, #f4d06f 0%, #c5a059 100%);
+      color: #0f3838;
+      font-family: 'Rozha One', serif;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, filter 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .open-btn:active {
+      transform: scale(0.95);
+      filter: brightness(0.95);
+    }
+
     /* Video Intro Overlay */
     #intro-overlay {
       position: fixed;
@@ -67,7 +159,7 @@
       height: 100%;
       background-color: #000000;
       z-index: 99999;
-      display: flex;
+      display: none; /* Shown after welcome gate opens */
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -437,13 +529,27 @@
   <!-- Toast Notification -->
   <div id="toast">नंबर कॉपी हो गया!</div>
 
-  <!-- Background Music Track with cache-buster query string (Muted initially to bypass mobile browser block) -->
-  <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto" muted></audio>
+  <!-- Background Music Track with cache-buster -->
+  <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto"></audio>
+
+  <!-- Welcome / Open Gate Screen -->
+  <div id="welcome-gate">
+    <div class="gate-content">
+      <div class="gate-top-heading">॥ श्री गणेशाय नमः ॥</div>
+      <div class="gate-title">शुभ विवाह निमंत्रण</div>
+      <div>
+        <div class="gate-names">सिद्धान्त</div>
+        <div class="gate-connector">एवं</div>
+        <div class="gate-names">सुकृति</div>
+      </div>
+      <div class="gate-date">दिनांक: 02 एवं 03 दिसंबर, 2026</div>
+      <button class="open-btn" onclick="openInvitation()">॥ निमंत्रण खोलें ॥</button>
+    </div>
+  </div>
 
   <!-- Video Intro Overlay -->
   <div id="intro-overlay">
     <div class="video-container">
-      <!-- Muted existing video -->
       <video id="intro-video" autoplay muted playsinline preload="auto">
         <source src="wedding_intro.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -572,19 +678,55 @@
   </div>
 
   <script>
-    /* Background Audio Controls & Instant Load Autoplay Trick */
+    /* Background Audio & Welcome Gate Trigger */
     const bgAudio = document.getElementById('bg-audio');
+    const welcomeGate = document.getElementById('welcome-gate');
+    const introOverlay = document.getElementById('intro-overlay');
+    const introVideo = document.getElementById('intro-video');
 
     if (bgAudio) {
-      bgAudio.currentTime = 0; // Force start from 0
-      bgAudio.muted = true;    // Start muted to bypass browser policy restriction instantly on load
-      
-      bgAudio.play().then(() => {
-        // Once playback successfully starts silently, instantly unmute it so sound plays immediately
-        bgAudio.muted = false;
-      }).catch(error => {
-        console.log("Autoplay restriction fallback triggered:", error);
-      });
+      bgAudio.currentTime = 0; // Force start from beginning
+    }
+
+    function openInvitation() {
+      // 1. Play background music immediately with user interaction touch
+      if (bgAudio) {
+        bgAudio.currentTime = 0;
+        bgAudio.play().catch(err => console.log("Audio play error:", err));
+      }
+
+      // 2. Hide Welcome Gate
+      if (welcomeGate) {
+        welcomeGate.classList.add('fade-out');
+        setTimeout(() => {
+          welcomeGate.style.display = 'none';
+        }, 800);
+      }
+
+      // 3. Show and play Intro Video
+      if (introOverlay) {
+        introOverlay.style.display = 'flex';
+        if (introVideo) {
+          introVideo.play().catch(() => {});
+        }
+      }
+    }
+
+    function dismissIntro() {
+      if (introOverlay) {
+        introOverlay.classList.add('fade-out');
+        setTimeout(() => {
+          introOverlay.style.display = 'none';
+        }, 800);
+      }
+      if (bgAudio && bgAudio.paused) {
+        bgAudio.play().catch(() => {});
+      }
+    }
+
+    if (introVideo) {
+      introVideo.addEventListener('ended', dismissIntro);
+      introVideo.addEventListener('error', dismissIntro);
     }
 
     // Tab Switch Pause/Resume Handler
@@ -593,7 +735,10 @@
       if (document.hidden) {
         bgAudio.pause();
       } else {
-        bgAudio.play().catch(() => {});
+        // Resume only if welcome gate has been passed
+        if (welcomeGate && welcomeGate.style.display === 'none') {
+          bgAudio.play().catch(() => {});
+        }
       }
     });
 
@@ -617,28 +762,6 @@
       setTimeout(() => {
         toast.classList.remove('show');
       }, 2500);
-    }
-
-    /* Intro Overlay Management */
-    const introOverlay = document.getElementById('intro-overlay');
-    const introVideo = document.getElementById('intro-video');
-
-    function dismissIntro() {
-      if (introOverlay) {
-        introOverlay.classList.add('fade-out');
-        setTimeout(() => {
-          introOverlay.style.display = 'none';
-        }, 800);
-      }
-      if (bgAudio) {
-        bgAudio.muted = false;
-        bgAudio.play().catch(() => {});
-      }
-    }
-
-    if (introVideo) {
-      introVideo.addEventListener('ended', dismissIntro);
-      introVideo.addEventListener('error', dismissIntro);
     }
 
     /* Scroll Itinerary Accordion Handler */
