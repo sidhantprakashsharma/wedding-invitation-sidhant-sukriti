@@ -599,7 +599,7 @@
 </head>
 <body>
 
-  <!-- Petal Canvas Overlay (z-index adjusted to render on front page) -->
+  <!-- Petal Canvas Overlay -->
   <canvas id="petal-canvas"></canvas>
 
   <!-- Toast Notification -->
@@ -761,7 +761,7 @@
   </div>
 
   <script>
-    /* Background Audio & Welcome Gate Trigger */
+    /* Background Audio & Welcome Gate Trigger with 2-Second Delay */
     const bgAudio = document.getElementById('bg-audio');
     const welcomeGate = document.getElementById('welcome-gate');
     const introOverlay = document.getElementById('intro-overlay');
@@ -777,19 +777,22 @@
         bgAudio.play().catch(err => console.log("Audio play error:", err));
       }
 
-      if (welcomeGate) {
-        welcomeGate.classList.add('fade-out');
-        setTimeout(() => {
-          welcomeGate.style.display = 'none';
-        }, 800);
-      }
-
-      if (introOverlay) {
-        introOverlay.style.display = 'flex';
-        if (introVideo) {
-          introVideo.play().catch(() => {});
+      // Wait for 2 seconds (2000 ms) while playing sound before dismissing gate and opening video
+      setTimeout(() => {
+        if (welcomeGate) {
+          welcomeGate.classList.add('fade-out');
+          setTimeout(() => {
+            welcomeGate.style.display = 'none';
+          }, 800);
         }
-      }
+
+        if (introOverlay) {
+          introOverlay.style.display = 'flex';
+          if (introVideo) {
+            introVideo.play().catch(() => {});
+          }
+        }
+      }, 2000);
     }
 
     function dismissIntro() {
