@@ -375,9 +375,9 @@
 
     .contact-links-wrapper {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 6px;
     }
 
     .contact-link {
@@ -397,11 +397,6 @@
 
     .contact-link:active {
       color: #926d27;
-    }
-
-    .contact-divider {
-      color: #c5a059;
-      font-size: 0.7rem;
     }
 
     .decorative-divider {
@@ -443,7 +438,7 @@
   <div id="toast">नंबर कॉपी हो गया!</div>
 
   <!-- Background Music Track with cache-buster query string -->
-  <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto"></audio>
+  <audio id="bg-audio" src="threads_of_a_sacred_vow.mp3?v=20261030" loop preload="auto" muted></audio>
 
   <!-- Video Intro Overlay -->
   <div id="intro-overlay">
@@ -567,7 +562,6 @@
         <div class="contact-title">॥ संपर्क ॥</div>
         <div class="contact-links-wrapper">
           <a class="contact-link" onclick="handlePhoneClick(event, '+917836979821')">📞 +91 78369 79821</a>
-          <span class="contact-divider">•</span>
           <a class="contact-link" onclick="handlePhoneClick(event, '+919479781791')">📞 +91 94797 81791</a>
         </div>
       </div>
@@ -578,21 +572,19 @@
   </div>
 
   <script>
-    /* Background Audio Controls & Browser Autoplay Policies Handling */
+    /* Background Audio Controls & Instant Load Autoplay Trick */
     const bgAudio = document.getElementById('bg-audio');
 
-    // Reset audio state to start cleanly from 0 on fresh loads / hard reloads
     if (bgAudio) {
-      bgAudio.currentTime = 0;
-    }
-
-    function startBackgroundAudio() {
-      if (bgAudio) {
-        bgAudio.currentTime = 0; // Force play from start
-        bgAudio.play().catch(error => {
-          console.log("Autoplay blocked by browser policy, will resume on interaction:", error);
-        });
-      }
+      bgAudio.currentTime = 0; // Force start from 0
+      bgAudio.muted = true;    // Start muted to bypass browser policy restriction instantly on load
+      
+      bgAudio.play().then(() => {
+        // Once playback successfully starts silently, instantly unmute it so sound plays
+        bgAudio.muted = false;
+      }).catch(error => {
+        console.log("Autoplay restriction fallback triggered:", error);
+      });
     }
 
     // Tab Switch Pause/Resume Handler
@@ -601,10 +593,7 @@
       if (document.hidden) {
         bgAudio.pause();
       } else {
-        // Only resume if the intro overlay is gone or user has started viewing the invite
-        if (introOverlay && introOverlay.style.display === 'none') {
-          bgAudio.play().catch(() => {});
-        }
+        bgAudio.play().catch(() => {});
       }
     });
 
@@ -641,24 +630,16 @@
           introOverlay.style.display = 'none';
         }, 800);
       }
-      startBackgroundAudio();
+      if (bgAudio && bgAudio.paused) {
+        bgAudio.muted = false;
+        bgAudio.play().catch(() => {});
+      }
     }
 
     if (introVideo) {
-      // Try to play audio alongside the video on load
-      introVideo.addEventListener('loadedmetadata', () => {
-        startBackgroundAudio();
-      });
       introVideo.addEventListener('ended', dismissIntro);
       introVideo.addEventListener('error', dismissIntro);
     }
-
-    // Fallback user interaction listener in case browser blocks programmatic audio autoplay before tap
-    document.body.addEventListener('click', function initAudioOnClick() {
-      if (bgAudio && bgAudio.paused && introOverlay && introOverlay.style.display !== 'none') {
-        startBackgroundAudio();
-      }
-    }, { once: true });
 
     /* Scroll Itinerary Accordion Handler */
     function updateScrollItinerary() {
