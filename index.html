@@ -45,7 +45,7 @@
       overflow-x: hidden;
     }
 
-    /* Floating Petal Canvas */
+    /* Floating Petal Canvas - z-index increased so it renders above the welcome gate */
     #petal-canvas {
       position: fixed;
       top: 0;
@@ -53,10 +53,10 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 10;
+      z-index: 10000000;
     }
 
-    /* Formal Front Cover Gate (Hindi-Only with Extended Ornamental Frame & Falling Petals) */
+    /* Formal Front Cover Gate (Hindi-Only with Extended Ornamental Frame) */
     #welcome-gate {
       position: fixed;
       top: 0;
@@ -96,6 +96,7 @@
       border-radius: 12px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 35px rgba(197, 160, 89, 0.1);
       margin: auto;
+      z-index: 9999999;
     }
 
     /* Elegant Ornamental Corners */
@@ -169,7 +170,6 @@
       font-style: italic;
     }
 
-    /* Additional Front Page Design Elements to Fill Empty Space Gracefully */
     .cover-ornament-box {
       display: flex;
       align-items: center;
@@ -599,7 +599,7 @@
 </head>
 <body>
 
-  <!-- Petal Canvas Overlay (Active on Front Page and Throughout) -->
+  <!-- Petal Canvas Overlay (z-index adjusted to render on front page) -->
   <canvas id="petal-canvas"></canvas>
 
   <!-- Toast Notification -->
